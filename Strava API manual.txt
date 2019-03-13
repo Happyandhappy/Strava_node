@@ -1,0 +1,41 @@
+Manual:
+
+The purpose is to set up an API which can be used by any Strava user to share data.
+The data to be shared is a list of activities including the type of activities. 
+For all activities labeled 'Ride' we should get details (called Streams).
+These details are comparable to the content of a so called 'gpx-file'. 
+We gather this data via the Strava V3 API using Node. 
+To be able to get this data from users, they should Authorize this API and that includes the scope level 'read_all' which is not set by default. 
+
+1) go to Strava.com and login as me: 'joramkolf@hotmail.com' and pw: 'Developer'
+2) Click on the top right screen button with my picture and click 'instellingen' or 'Settings', click on the next page in the menu left on 'Mijn API toepassingen'. 
+   here you find the client ID, secret, access token etc. 
+3) The access token has a 'read' scope which we should upgrade to 'read_all'. Do the following steps:
+   a) type the following URL in your browser: http://www.strava.com/oauth/authorize?client_id=16560&response_type=code&redirect_uri=http://localhost/exchange_token&approval_prompt=force&scope=read,read_all,profile:read_all,activity:read_all
+   b) Click on yes Authorize
+   c) take from that URL the code and copy-paste it to the 'strava-code.js' file (replacing the old one). 
+   d) check in the 'strava_config' file if the access token is still valid and/or replace it if needed
+4) Run in the folder where you saved all files cmd command and type 'npm install request' (you only need to do this once)
+5) type in cmd 'node strava-code.js', you get 'strava-code-out.txt' file, copypaste the acces token from there and to 'strava_config' file
+6) type in cmd 'node test.js' you should get files for commands 1 till 9, where command 6 is shown in cmd instead of saved in file
+
+This is the current input, we need to add elements to that and automate the process.
+
+1) improve command where you get a list of all Activities (file 9). Currently it only takes 30 activities (the default parameter), 
+   this should be increased to all activities.
+   Please mind it should include not only '"athlete_count": 1,' but also 2 or higher. If not possible, there is an issue with the settings
+   See:  https://developers.strava.com/docs/reference/#api-Activities-getActivityById
+2) Based on the list of all Activities filter on only the activities       
+    "type": "Ride", 
+    and deselect any other type (like Virtual Ride or Run).
+   Save all Activities IDs
+3) Based on the list of Activity IDs use the streams command (file 8). 
+   See: https://developers.strava.com/docs/reference/#api-Streams-getActivityStreams
+   It currently does not receive 'power' while it should, let me find out what is going wrong there and update you later on it.
+   For each activity those streams outcomes should be saved in a CSV file. the columns names should be: distance, latlng, time, altitude, heartrate, power, temperature. 
+   The number of values should be equal for each column and be saved below the column name in the rows. 
+4) Add a few other variables to that other columns, these variables only have 1 value (instead of value per row). Do this for: start_date, moving_time, elapsed_time, total_elevation_gain, type, id, timezone and athlete_count
+
+Make sure the API knows when users have added a new activity. I think the best way to do that is to run the list activities command daily and make sure the script than compares the new list to the former list. 
+If there are new activities 'Ride', make sure to then also get details and save it as CSV file. The API could for instance check on this daily at 00:00 CET timezine. 
+
