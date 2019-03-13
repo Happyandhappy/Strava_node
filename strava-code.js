@@ -6,9 +6,9 @@ function run() {
     "https://www.strava.com/oauth/token",
     {
       json: {
-        client_id: "16560",
-        client_secret: "952ad2776cfeee810e58edc79b110713605b4e73",
-        code: "d5aca2620b502943b8a8ef966791140d940da9ac",
+        client_id: "",
+        client_secret: "",
+        code: "",
         grant_type: "authorization_code",
         scope: "activity:read_all"
       }
